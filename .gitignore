@@ -1,0 +1,69 @@
+###############
+#### Godot ####
+###############
+# Godot-specific ignores
+.import/
+export.cfg
+export_presets.cfg
+
+# Mono-specific ignores
+.mono/
+
+# System/tool-specific ignores
+.directory
+*~
+
+# C++ bindings
+godot-cpp/
+*.os
+
+###############
+##### KDE #####
+###############
+.directory
+
+###############
+#### Scons ####
+###############
+.sconsign.dblite
+
+###############
+### VSCode ####
+###############
+.vscode/*
+
+###############
+##### C++ #####
+###############
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
