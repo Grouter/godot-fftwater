@@ -19,3 +19,7 @@ scons p=linux/mac/windows
 # clang++
 scons p=linux/osx/windows use_llvm=1
 ```
+# Thanks to
+[Simple-FFT](https://github.com/d1vanov/Simple-FFT)
+
+[Ocean simulation part two: using the fast Fourier transform](https://www.keithlantz.net/2011/11/ocean-simulation-part-two-using-the-fast-fourier-transform/)
