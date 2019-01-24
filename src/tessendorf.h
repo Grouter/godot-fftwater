@@ -28,26 +28,23 @@ namespace godot {
         GODOT_CLASS(Tessendorf, Reference)
         private:
             /* Ocean simulation */
-            float seed;
             float g;
             float amplitude;
             float wind_speed;
             float length;
             Vector2 wind_direction;
-            std::complex<float> **htilde, **htilde_slopex, **htilde_slopez, **htilde_dx, **htilde_dz;
-            std::complex<float> **gss;
-            //vertex_ocean *vertices;
             unsigned int N, Nplus1;
+            std::complex<float> **htilde;
+            std::complex<float> **gss;
+            
             /* Gaussian random */
             std::default_random_engine gen;
             std::normal_distribution<float> dist;
-            /* Varticies */
-            Ref<MeshDataTool> mdt;
-
-            float dispersion(Vector2 K);
-            float phillips(Vector2 K);
+            
             std::complex<float> gaussian();
+            float phillips(Vector2 K);
             std::complex<float> h0_tilde(Vector2 K, int n, int m);
+            float dispersion(Vector2 K);
             std::complex<float> h_tilde(Vector2 K, int n, int m, float t);
         public:
             static void _register_methods();
@@ -57,12 +54,7 @@ namespace godot {
 
             void _init();
             
-            void update(float t);
-            //float get_h(int m, int n);
-            void set_mdt(Ref<MeshDataTool> mr);
-
-            /* DEBUG */
-            //Vector2 dh_tilde(Vector2 K, float time);
+            void update(float t, Ref<MeshDataTool> mdt);
     };
 
 }
