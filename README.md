@@ -14,7 +14,7 @@ Works on Godot 3.1-beta
 # Compile
 ``` bash
 # g++
-scons p=linux/mac/windows
+scons p=linux/osx/windows
 
 # clang++
 scons p=linux/osx/windows use_llvm=1
