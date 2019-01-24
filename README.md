@@ -6,10 +6,16 @@ Works on Godot 3.1-beta
 # Usage
 1) Clone [godot-cpp](https://github.com/GodotNativeTools/godot-cpp) repo **recursively** (it contains submodules)
 2) Put it in this directory next to `godotProject`, `lib` and `src`
+3) Navigate to `godot-cpp` folder
+4) Run:
+```bash
+scons p=linux/osx/windows generate_bindings=yes
+```
 
 # Dependencies
 1) Scons
 2) g++ or clang++
+3) Compiled godot c++ bindings (see Usage)
 
 # Compile
 ``` bash
