@@ -1,4 +1,6 @@
-# godot-fftwater
+# Project is still WIP -> only height map generation works
+
+# Godot FFT Water
 Works on Godot 3.1-beta
 
 # Usage
