@@ -19,10 +19,7 @@ namespace godot {
         private:
             /* Ocean simulation */
             float g;
-            float amplitude;
-            float wind_speed;
             float length;
-            Vector2 wind_direction;
             unsigned int N, Nplus1;
             std::complex<float> **htilde;
             std::complex<float> **gauss;
@@ -37,6 +34,10 @@ namespace godot {
             float dispersion(Vector2 K);
             std::complex<float> h_tilde(Vector2 K, int n, int m, float t);
         public:
+            float amplitude;
+            float wind_speed;
+            Vector2 wind_direction;
+
             static void _register_methods();
 
             Tessendorf();

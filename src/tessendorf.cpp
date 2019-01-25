@@ -9,6 +9,10 @@ using namespace std;
 
 void Tessendorf::_register_methods() {
     register_method("update", &Tessendorf::update);
+
+    register_property("amplitude", &Tessendorf::amplitude, 5.0f);
+    register_property("wind_speed", &Tessendorf::wind_speed, 31.0f);
+    register_property("wind_direction", &Tessendorf::wind_direction, Vector2(1.0f, 0.0f));
 }
 
 Tessendorf::Tessendorf() {}
@@ -29,12 +33,12 @@ Tessendorf::~Tessendorf() {
 
 void Tessendorf::_init() {
     g = 9.81f;
-    amplitude = 100.0f;
+    amplitude = 5.0f;
     wind_speed = 31.0f;
-    length = 128.0f;
-    wind_direction = Vector2(1, 0);
+    length = 1000.0f;
+    wind_direction = Vector2(1.0f, 0.0f);
 
-    N = 128;
+    N = 256;
     Nplus1 = N + 1;
 
     htilde = new complex<float>*[N];
@@ -63,7 +67,7 @@ float Tessendorf::phillips(Vector2 K) {
     float kl2 = kl * kl;
     float l = pow(10, -4) * L;
 
-    return amplitude * exp(-1.0f / (kl2 * L * L)) / (kl2 * kl2) * (dt * dt) * exp(-(kl * kl) * l * l);
+    return amplitude * exp(-1.0f / (kl2 * L * L)) / (kl2 * kl2) * pow(dt, 2) * exp(-(kl * kl) * l * l);
 }
 
 complex<float> Tessendorf::h0_tilde(Vector2 K, int n, int m) {
@@ -101,7 +105,7 @@ void Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> m
     int sign;
     float signs[] = { 1.0f, -1.0f };
     Image *himg = Image::_new();
-    himg->create(N, N, false, Image::FORMAT_RGB8);
+    himg->create(N, N, false, Image::FORMAT_RGBF);
     himg->lock();
     for (int m = 0; m < N; m++) {
         for (int n = 0; n < N; n++) {
