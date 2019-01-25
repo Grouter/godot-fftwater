@@ -6,8 +6,12 @@ Works on Godot 3.1-beta
 ---
 
 # Usage (if you want to just use it in your game)
-Download `godotProject/bin` folder into your Godot project folder.
-Look at usage in Water.gd script
+Download `godotProject/bin`, `godotProject/Water.shader` and `godotProject/Water.gd` folder into your Godot project folder.
+
+1) Create `MeshInstance` and set `PlaneMesh` as mesh propery
+    * adjust size and subdivide as you want
+2) Create `ShaderMaterial` in material property and attach `Water.shader` to it
+3) Attach `Water.gd`
 
 ---
 
