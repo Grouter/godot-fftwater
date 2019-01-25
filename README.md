@@ -1,4 +1,7 @@
-# Project is still WIP -> only height map generation works
+# WIP -> TODO
+- [x] Vertical displacement (y axis)
+- [ ] Horizontal displacement (xz axis)
+- [ ] Fix normals generation
 
 # Godot FFT Water
 Works on Godot 3.1-beta
@@ -6,6 +9,8 @@ Works on Godot 3.1-beta
 ---
 
 # Usage (if you want to just use it in your game)
+`tessendorf.gdns` library just generates displacement values and pushes them via texture to material(shader) passed in by update funtion. Actual vertex displacement must be done in shader.
+
 Download `godotProject/bin`, `godotProject/Water.shader` and `godotProject/Water.gd` folder into your Godot project folder.
 
 1) Create `MeshInstance` and set `PlaneMesh` as mesh property
