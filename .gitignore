@@ -15,7 +15,6 @@ export_presets.cfg
 
 # C++ bindings
 godot-cpp/
-*.os
 
 ###############
 ##### KDE #####
