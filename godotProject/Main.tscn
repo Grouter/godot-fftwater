@@ -1,10 +1,10 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://DebugMaterial.tres" type="Material" id=1]
+[ext_resource path="res://WaterMaterial.tres" type="Material" id=1]
 [ext_resource path="res://Water.gd" type="Script" id=2]
 [ext_resource path="res://assets/maujoe.camera_control/scripts/camera_control.gd" type="Script" id=3]
 
-[sub_resource type="PlaneMesh" id=1]
+[sub_resource type="PlaneMesh" id=3]
 
 material = ExtResource( 1 )
 size = Vector2( 50, 50 )
@@ -14,7 +14,7 @@ subdivide_depth = 127
 [node name="Spatial" type="Spatial"]
 
 [node name="Water" type="MeshInstance" parent="."]
-mesh = SubResource( 1 )
+mesh = SubResource( 3 )
 material/0 = null
 script = ExtResource( 2 )
 
