@@ -1,7 +1,8 @@
 #include "tessendorf.h"
 #include <Vector3.hpp>
 #include <MeshDataTool.hpp>
-#include <math.h>
+#include <Image.hpp>
+#include <ImageTexture.hpp>
 
 using namespace godot;
 using namespace std;
@@ -13,7 +14,17 @@ void Tessendorf::_register_methods() {
 Tessendorf::Tessendorf() {}
 
 Tessendorf::~Tessendorf() {
-    if (htilde) delete [] htilde;
+    if (htilde) {
+        for(int i = 0; i < N; i++)
+            delete [] htilde[i];
+        delete [] htilde;
+    }
+
+    if (gauss) {
+        for(int i = 0; i < N; i++)
+            delete [] gauss[i];
+        delete [] gauss;
+    }
 }
 
 void Tessendorf::_init() {
@@ -27,12 +38,12 @@ void Tessendorf::_init() {
     Nplus1 = N + 1;
 
     htilde = new complex<float>*[N];
-    gss = new complex<float>*[N];
+    gauss = new complex<float>*[N];
     for(int i = 0; i < N; i++) {
         htilde[i] = new complex<float>[N];
-        gss[i] = new complex<float>[N];
+        gauss[i] = new complex<float>[N];
         for(int j = 0; j < N; j++) {
-            gss[i][j] = gaussian();
+            gauss[i][j] = gaussian();
         }
     }
     
@@ -56,8 +67,8 @@ float Tessendorf::phillips(Vector2 K) {
 }
 
 complex<float> Tessendorf::h0_tilde(Vector2 K, int n, int m) {
-    complex<float> gauss = gss[n][m];
-    return gauss * (1.0f / sqrt(2.0f)) * sqrt(phillips(K));
+    complex<float> gauss_pick = gauss[n][m];
+    return gauss_pick * (1.0f / sqrt(2.0f)) * sqrt(phillips(K));
 }
 
 float Tessendorf::dispersion(Vector2 K) {
@@ -72,10 +83,10 @@ complex<float> Tessendorf::h_tilde(Vector2 K, int n, int m, float time) {
     return h0_tilde(K, n, m) * rot + conj(h0_tilde(-K, m, n)) * roti;
 }
 
-void Tessendorf::update(float time, Ref<MeshDataTool> mdt) {
-    float kx, kz;
+void Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {
     int index;
 
+    float kx, kz;
     for (int m = 0; m < N; m++) {
         kz = 2.0f * M_PI * (m - N / 2.0f) / length;
         for (int n = 0; n < N; n++) {
@@ -83,26 +94,29 @@ void Tessendorf::update(float time, Ref<MeshDataTool> mdt) {
             htilde[n][m] = h_tilde(Vector2(kx, kz), n, m, time);
         }
     }
-    
+
     const char * error = NULL;
     simple_fft::IFFT(htilde, htilde, N, N, error);
 
     int sign;
     float signs[] = { 1.0f, -1.0f };
+    Image *himg = Image::_new();
+    himg->create(N, N, false, Image::FORMAT_RGB8);
+    himg->lock();
     for (int m = 0; m < N; m++) {
-        kz = 2.0f * M_PI * (m - N / 2.0f) / length;
         for (int n = 0; n < N; n++) {
-            kx = 2.0f * M_PI * (n - N / 2.0f) / length;
-            index = m * Nplus1 + n;
-
             sign = signs[(n + m) & 1];
             htilde[n][m] *= (float)sign;
-
-            mdt->set_vertex_color(index, Color(
+            
+            himg->set_pixel(n, m, Color(
                 htilde[n][m].real(),
                 htilde[n][m].real(),
                 htilde[n][m].real()
             ));
         }
     }
+
+    ImageTexture *htex = ImageTexture::_new();
+    htex->create_from_image(himg);
+    material->set_shader_param("height_map", htex);
 }

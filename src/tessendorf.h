@@ -6,22 +6,12 @@
 #include <Ref.hpp>
 #include <Vector2.hpp>
 #include <MeshDataTool.hpp>
-#include <MeshInstance.hpp>
+#include <ShaderMaterial.hpp>
 
 #include <complex>
 #include <random>
 
-//#include "fft.h"
 #include <fft.hpp>
-#include <fft_settings.h>
-
-/*struct vertex_ocean {
-    float   x,   y,   z; // vertex
-    float  nx,  ny,  nz; // normal
-    float   a,   b,   c; // htilde0
-    float  _a,  _b,  _c; // htilde0mk conjugate
-    float  ox,  oy,  oz; // original position
-};*/
 
 namespace godot {
     class Tessendorf : public Reference {
@@ -35,7 +25,7 @@ namespace godot {
             Vector2 wind_direction;
             unsigned int N, Nplus1;
             std::complex<float> **htilde;
-            std::complex<float> **gss;
+            std::complex<float> **gauss;
             
             /* Gaussian random */
             std::default_random_engine gen;
@@ -54,7 +44,7 @@ namespace godot {
 
             void _init();
             
-            void update(float t, Ref<MeshDataTool> mdt);
+            void update(float t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
     };
 
 }
