@@ -1,7 +1,7 @@
 # WIP -> TODO
 - [x] Vertical displacement (y axis)
 - [ ] Horizontal displacement (xz axis)
-- [ ] Fix normals generation
+- [x] Fix normals generation
 - [ ] More precalculations for lower CPU usage
 - [ ] Release package for easier use
 
