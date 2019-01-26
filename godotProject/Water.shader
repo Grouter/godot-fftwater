@@ -12,21 +12,14 @@ vec4 get_data(in vec2 pos) {
 	float sh = texture(height_map, pos + off.yx / texsize).r; // 10 u
 	float nh = texture(height_map, pos + off.yz / texsize).r; // 12 d
 	
-	vec3 va = normalize(vec3(0.0, 1.0, eh - wh));
-	vec3 vb = normalize(vec3(nh - sh, 1.0, 0.0));
-	
-	/*vec3 va = normalize(vec3(eh - wh, 1.0, 0.0));
-	vec3 vb = normalize(vec3(0.0, 1.0, nh - sh));*/
+	vec3 va = normalize(vec3(1.0, 0.0, eh - wh));
+	vec3 vb = normalize(vec3(0.0, 1.0, nh - sh));
 
-	return vec4(cross(va, vb), h);
+	return vec4(normalize(cross(va, vb)), h);
 }
 
 void vertex() {
 	vec4 data = get_data(UV);
-	NORMAL = data.xyz;
+	NORMAL.xyz = data.xyz;
 	VERTEX.y = data.w;
-}
-
-void fragment() {
-	//ALBEDO = texture(height_map, UV).rgb;
 }
