@@ -12,8 +12,8 @@ vec4 get_data(in vec2 pos) {
 	float sh = texture(height_map, pos + off.yx / texsize).r; // 10 u
 	float nh = texture(height_map, pos + off.yz / texsize).r; // 12 d
 	
-	vec3 va = normalize(vec3(1.0, 0.0, eh - wh));
-	vec3 vb = normalize(vec3(0.0, 1.0, nh - sh));
+	vec3 va = normalize(vec3(0.0, 1.0, eh - wh));
+	vec3 vb = normalize(vec3(1.0, 0.0, nh - sh));
 
 	return vec4(normalize(cross(va, vb)), h);
 }
