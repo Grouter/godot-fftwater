@@ -48,7 +48,7 @@ namespace godot {
 
             void _init();
             
-            Vector3 update(float t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
+            void update(float t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
     };
 
 }

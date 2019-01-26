@@ -107,7 +107,7 @@ complex<float> Tessendorf::h_tilde(Vector2 K, int n, int m, float time) {
     return h0_tilde(K, n, m) * rot + conj(h0_tilde(-K, m, n)) * roti;
 }
 
-Vector3 Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {
+void Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {
     int index;
 
     float kx, kz, klen;
@@ -158,10 +158,4 @@ Vector3 Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial
     ImageTexture *htex = ImageTexture::_new();
     htex->create_from_image(himg);
     material->set_shader_param("height_map", htex);
-
-    return Vector3(
-        dx[0][0].real() * lambda,
-        htilde[0][0].real(),
-        dz[0][0].real() * lambda
-    );
 }
