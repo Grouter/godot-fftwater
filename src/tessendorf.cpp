@@ -33,12 +33,12 @@ Tessendorf::~Tessendorf() {
 
 void Tessendorf::_init() {
     g = 9.81f;
-    amplitude = 5.0f;
+    amplitude = 15.0f;
     wind_speed = 31.0f;
-    length = 1000.0f;
+    length = 400.0f;
     wind_direction = Vector2(1.0f, 0.0f);
 
-    N = 256;
+    N = 128;
     Nplus1 = N + 1;
 
     htilde = new complex<float>*[N];
@@ -67,7 +67,7 @@ float Tessendorf::phillips(Vector2 K) {
     float kl2 = kl * kl;
     float l = pow(10, -4) * L;
 
-    return amplitude * exp(-1.0f / (kl2 * L * L)) / (kl2 * kl2) * pow(dt, 2) * exp(-(kl * kl) * l * l);
+    return amplitude * exp(-1.0f / (kl2 * L * L)) / (kl2 * kl2) * pow(dt, 6) * exp(-(kl * kl) * l * l);
 }
 
 complex<float> Tessendorf::h0_tilde(Vector2 K, int n, int m) {
