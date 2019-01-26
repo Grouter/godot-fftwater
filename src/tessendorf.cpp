@@ -25,10 +25,16 @@ Tessendorf::~Tessendorf() {
         delete [] htilde;
     }
 
-    if (gauss) {
+    if (h0tk) {
         for(int i = 0; i < N; i++)
-            delete [] gauss[i];
-        delete [] gauss;
+            delete [] h0tk[i];
+        delete [] h0tk;
+    }
+
+    if (h0tmk) {
+        for(int i = 0; i < N; i++)
+            delete [] h0tmk[i];
+        delete [] h0tmk;
     }
 
     if (dx) {
@@ -56,22 +62,30 @@ void Tessendorf::_init() {
     N = 128;
     Nplus1 = N + 1;
 
+    dist = normal_distribution<float>(0.0f, 1.0f);
+
     htilde = new complex<float>*[N];
     dx = new complex<float>*[N];
     dz = new complex<float>*[N];
-    gauss = new complex<float>*[N];
+    h0tk = new complex<float>*[N];
+    h0tmk = new complex<float>*[N];
     for(int i = 0; i < N; i++) {
         htilde[i] = new complex<float>[N];
         dx[i] = new complex<float>[N];
         dz[i] = new complex<float>[N];
-        
-        gauss[i] = new complex<float>[N];
-        for(int j = 0; j < N; j++) {
-            gauss[i][j] = gaussian();
+        h0tk[i] = new complex<float>[N];
+        h0tmk[i] = new complex<float>[N];
+    }
+
+    float kx, kz;
+    for (int m = 0; m < N; m++) {
+        kz = 2.0f * M_PI * (m - N / 2.0f) / length;
+        for (int n = 0; n < N; n++) {
+            kx = 2.0f * M_PI * (n - N / 2.0f) / length;
+            h0tk[n][m] = h0_tilde(Vector2(kx, kz));
+            h0tmk[n][m] = h0_tilde(-Vector2(kx, kz));
         }
     }
-    
-    dist = normal_distribution<float>(0.0f, 1.0f);
 }
 
 complex<float> Tessendorf::gaussian() {
@@ -90,8 +104,8 @@ float Tessendorf::phillips(Vector2 K) {
     return amplitude * exp(-1.0f / (kl2 * L * L)) / (kl2 * kl2) * pow(dt, 6) * exp(-(kl * kl) * l * l);
 }
 
-complex<float> Tessendorf::h0_tilde(Vector2 K, int n, int m) {
-    complex<float> gauss_pick = gauss[n][m];
+complex<float> Tessendorf::h0_tilde(Vector2 K) {
+    complex<float> gauss_pick = gaussian();
     return gauss_pick * (1.0f / sqrt(2.0f)) * sqrt(phillips(K));
 }
 
@@ -104,7 +118,7 @@ complex<float> Tessendorf::h_tilde(Vector2 K, int n, int m, float time) {
 
     complex<float> rot(cos(omegakt), sin(omegakt));
     complex<float> roti(rot.real(), -rot.imag());
-    return h0_tilde(K, n, m) * rot + conj(h0_tilde(-K, m, n)) * roti;
+    return h0tk[n][m] * rot + conj(h0tmk[n][m]) * roti;
 }
 
 void Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {

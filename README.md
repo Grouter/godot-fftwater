@@ -2,9 +2,10 @@
 - [x] Vertical displacement (y axis)
 - [x] Horizontal displacement (xz axis) - choppy waves
 - [x] Fix normals generation
-- [ ] More precalculations for lower CPU usage
+- [x] More precalculations for lower CPU usage
 - [ ] Adjusting LOD (changing N variable)
 - [ ] Release package for easier use
+- [ ] Documentation
 
 # Godot FFT Water
 Works on Godot 3.1-beta

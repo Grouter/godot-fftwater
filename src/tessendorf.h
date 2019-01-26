@@ -24,15 +24,19 @@ namespace godot {
             std::complex<float> **htilde;
             std::complex<float> **dx;
             std::complex<float> **dz;
-            std::complex<float> **gauss;
+            std::complex<float> **h0tk;
+            std::complex<float> **h0tmk;
             
             /* Gaussian random */
             std::default_random_engine gen;
             std::normal_distribution<float> dist;
             
+            /* Precalculation */
             std::complex<float> gaussian();
             float phillips(Vector2 K);
-            std::complex<float> h0_tilde(Vector2 K, int n, int m);
+            std::complex<float> h0_tilde(Vector2 K);
+
+            /* Realtime calculations */
             float dispersion(Vector2 K);
             std::complex<float> h_tilde(Vector2 K, int n, int m, float t);
         public:
