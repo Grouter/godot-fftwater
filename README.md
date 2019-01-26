@@ -1,8 +1,9 @@
 # WIP -> TODO
 - [x] Vertical displacement (y axis)
-- [ ] Horizontal displacement (xz axis)
+- [x] Horizontal displacement (xz axis) - choppy waves
 - [x] Fix normals generation
 - [ ] More precalculations for lower CPU usage
+- [ ] Adjusting LOD (changing N variable)
 - [ ] Release package for easier use
 
 # Godot FFT Water

@@ -12,6 +12,7 @@ void Tessendorf::_register_methods() {
 
     register_property("amplitude", &Tessendorf::amplitude, 5.0f);
     register_property("wind_speed", &Tessendorf::wind_speed, 31.0f);
+    register_property("lambda", &Tessendorf::lambda, -0.5f);
     register_property("wind_direction", &Tessendorf::wind_direction, Vector2(1.0f, 0.0f));
 }
 
@@ -29,22 +30,41 @@ Tessendorf::~Tessendorf() {
             delete [] gauss[i];
         delete [] gauss;
     }
+
+    if (dx) {
+        for(int i = 0; i < N; i++)
+            delete [] dx[i];
+        delete [] dx;
+    }
+
+    if (dz) {
+        for(int i = 0; i < N; i++)
+            delete [] dz[i];
+        delete [] dz;
+    }
 }
 
 void Tessendorf::_init() {
     g = 9.81f;
+    length = 500.0f;
+
     amplitude = 15.0f;
     wind_speed = 31.0f;
-    length = 500.0f;
+    lambda = -0.5f;
     wind_direction = Vector2(1.0f, 0.0f);
 
     N = 128;
     Nplus1 = N + 1;
 
     htilde = new complex<float>*[N];
+    dx = new complex<float>*[N];
+    dz = new complex<float>*[N];
     gauss = new complex<float>*[N];
     for(int i = 0; i < N; i++) {
         htilde[i] = new complex<float>[N];
+        dx[i] = new complex<float>[N];
+        dz[i] = new complex<float>[N];
+        
         gauss[i] = new complex<float>[N];
         for(int j = 0; j < N; j++) {
             gauss[i][j] = gaussian();
@@ -87,20 +107,32 @@ complex<float> Tessendorf::h_tilde(Vector2 K, int n, int m, float time) {
     return h0_tilde(K, n, m) * rot + conj(h0_tilde(-K, m, n)) * roti;
 }
 
-void Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {
+Vector3 Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {
     int index;
 
-    float kx, kz;
+    float kx, kz, klen;
     for (int m = 0; m < N; m++) {
         kz = 2.0f * M_PI * (m - N / 2.0f) / length;
         for (int n = 0; n < N; n++) {
             kx = 2.0f * M_PI * (n - N / 2.0f) / length;
+            klen = sqrt(kx * kx + kz * kz);
+
             htilde[n][m] = h_tilde(Vector2(kx, kz), n, m, time);
+
+            if (klen < 0.000001f) {
+                dx[n][m] = complex<float>(0.0f, 0.0f);
+                dz[n][m] = complex<float>(0.0f, 0.0f);
+            } else {
+                dx[n][m] = htilde[n][m] * complex<float>(0.0f, -kx / klen);
+                dz[n][m] = htilde[n][m] * complex<float>(0.0f, -kz / klen);
+            }
         }
     }
 
     const char * error = NULL;
     simple_fft::IFFT(htilde, htilde, N, N, error);
+    simple_fft::IFFT(dx, dx, N, N, error);
+    simple_fft::IFFT(dz, dz, N, N, error);
 
     int sign;
     float signs[] = { 1.0f, -1.0f };
@@ -110,12 +142,15 @@ void Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> m
     for (int m = 0; m < N; m++) {
         for (int n = 0; n < N; n++) {
             sign = signs[(n + m) & 1];
+
             htilde[n][m] *= (float)sign;
-            
+            dx[n][m] *= (float)sign;
+            dz[n][m] *= (float)sign;
+
             himg->set_pixel(n, m, Color(
+                dx[n][m].real() * lambda,
                 htilde[n][m].real(),
-                htilde[n][m].real(),
-                htilde[n][m].real()
+                dz[n][m].real() * lambda
             ));
         }
     }
@@ -123,4 +158,10 @@ void Tessendorf::update(float time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> m
     ImageTexture *htex = ImageTexture::_new();
     htex->create_from_image(himg);
     material->set_shader_param("height_map", htex);
+
+    return Vector3(
+        dx[0][0].real() * lambda,
+        htilde[0][0].real(),
+        dz[0][0].real() * lambda
+    );
 }

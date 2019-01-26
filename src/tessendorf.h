@@ -22,6 +22,8 @@ namespace godot {
             float length;
             unsigned int N, Nplus1;
             std::complex<float> **htilde;
+            std::complex<float> **dx;
+            std::complex<float> **dz;
             std::complex<float> **gauss;
             
             /* Gaussian random */
@@ -36,6 +38,7 @@ namespace godot {
         public:
             float amplitude;
             float wind_speed;
+            float lambda;
             Vector2 wind_direction;
 
             static void _register_methods();
@@ -45,7 +48,7 @@ namespace godot {
 
             void _init();
             
-            void update(float t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
+            Vector3 update(float t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
     };
 
 }
