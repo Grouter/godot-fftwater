@@ -13,7 +13,7 @@ func _ready():
 
 func _process(delta):
 	var t = OS.get_ticks_msec() - start_time
-	tessendorf.update(t / 1000.0, mdt, mat)
+	tessendorf.update(t / 500.0, mdt, mat)
 	self.mesh.surface_remove(0)
 	mdt.commit_to_surface(self.mesh)
 	
