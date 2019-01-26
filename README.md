@@ -9,7 +9,7 @@
 # Godot FFT Water
 Works on Godot 3.1-beta
 
-![Water GIF](https://github.com/Grouter/godot-fftwater/raw/master/gif/w.gif)
+---
 
 # Usage (if you want to just use it in your game)
 `tessendorf.gdns` library just generates displacement values and pushes them via texture to material(shader) passed in by update funtion. Actual vertex displacement must be done in shader.
