@@ -35,7 +35,7 @@ void Tessendorf::_init() {
     g = 9.81f;
     amplitude = 15.0f;
     wind_speed = 31.0f;
-    length = 400.0f;
+    length = 500.0f;
     wind_direction = Vector2(1.0f, 0.0f);
 
     N = 128;
