@@ -3,6 +3,7 @@
 ###############
 # Godot-specific ignores
 .import/
+assets/
 export.cfg
 export_presets.cfg
 
