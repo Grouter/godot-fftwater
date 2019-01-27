@@ -15,12 +15,13 @@ Works on Godot 3.1-beta
 # Usage (if you want to just use it in your game)
 `tessendorf.gdns` library just generates displacement values and pushes them via texture to material(shader) passed in by update funtion. Actual vertex displacement must be done in shader.
 
-Download `godotProject/bin`, `godotProject/Water.shader` and `godotProject/Water.gd` into your Godot project folder.
+Download zip from [release page](https://github.com/Grouter/godot-fftwater/releases) and unzip in your Godot project folder.
 
 1) Create `MeshInstance` and set `PlaneMesh` as mesh property
     * adjust size and subdivide as you want
 2) Create `ShaderMaterial` in material property and attach `Water.shader` to it
 3) Attach `Water.gd`
+4) Change as you want
 
 ---
 
