@@ -19,7 +19,6 @@ namespace godot {
         private:
             /* Ocean simulation */
             double g;
-            double length;
             unsigned int N, Nsq;
             std::complex<double> *htilde, *htilde_i;
             std::complex<double> *dx, *dx_i;
@@ -44,6 +43,7 @@ namespace godot {
         public:
             double amplitude;
             double wind_speed;
+            double length;
             double lambda;
             double smoothing;
             Vector2 wind_direction;

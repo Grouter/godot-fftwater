@@ -14,6 +14,7 @@ void Tessendorf::_register_methods() {
 
     register_property("amplitude", &Tessendorf::amplitude, 5.0);
     register_property("wind_speed", &Tessendorf::wind_speed, 31.0);
+    register_property("length", &Tessendorf::length, 500.0);
     register_property("lambda", &Tessendorf::lambda, -0.5);
     register_property("smoothing", &Tessendorf::smoothing, 2.0);
     register_property("wind_direction", &Tessendorf::wind_direction, Vector2(1.0, 0.0));
@@ -44,10 +45,10 @@ Tessendorf::~Tessendorf() {
 
 void Tessendorf::_init() {
     g = 9.81;
-    length = 500.0;
 
     amplitude = 15.0;
     wind_speed = 31.0;
+    length = 500.0;
     lambda = -0.5;
     smoothing = 2.0;
     wind_direction = Vector2(1.0, 0.0);
@@ -107,8 +108,9 @@ double Tessendorf::phillips(Vector2 K) {
     kl = (kl < 0.0001) ? 0.0001 : kl;
     double dt = K.normalized().dot(wind_direction.normalized());
     double kl2 = kl * kl;
+    double dt6 = dt * dt * dt * dt * dt * dt;
 
-    return amplitude * exp(-1.0 / (kl2 * L * L)) / (kl2 * kl2) * pow(dt, 6) * exp(-(kl * kl) * smoothing * smoothing);
+    return amplitude * exp(-1.0 / (kl2 * L * L)) / (kl2 * kl2) * dt * exp(-(kl * kl) * smoothing * smoothing);
 }
 
 complex<double> Tessendorf::h0_tilde(Vector2 K) {
