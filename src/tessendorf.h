@@ -57,7 +57,7 @@ namespace godot {
             
             void init(int freq_size);
             void calculate();
-            Vector3 update(double t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
+            void update(double t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
     };
 
 }
