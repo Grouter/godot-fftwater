@@ -11,39 +11,41 @@
 #include <complex>
 #include <random>
 
-#include <fft.hpp>
+#include <fftw3.h>
 
 namespace godot {
     class Tessendorf : public Reference {
         GODOT_CLASS(Tessendorf, Reference)
         private:
             /* Ocean simulation */
-            float g;
-            float length;
-            unsigned int N;
-            std::complex<float> **htilde;
-            std::complex<float> **dx;
-            std::complex<float> **dz;
-            std::complex<float> **h0tk;
-            std::complex<float> **h0tmk;
+            double g;
+            double length;
+            unsigned int N, Nsq;
+            std::complex<double> *htilde, *htilde_i;
+            std::complex<double> *dx, *dx_i;
+            std::complex<double> *dz, *dz_i;
+            std::complex<double> *h0tk;
+            std::complex<double> *h0tmk;
+
+            fftw_plan p_htilde, p_dx, p_dz;
             
             /* Gaussian random */
             std::default_random_engine gen;
-            std::normal_distribution<float> dist;
+            std::normal_distribution<double> dist;
             
             /* Precalculation */
-            std::complex<float> gaussian();
-            float phillips(Vector2 K);
-            std::complex<float> h0_tilde(Vector2 K);
+            std::complex<double> gaussian();
+            double phillips(Vector2 K);
+            std::complex<double> h0_tilde(Vector2 K);
 
             /* Realtime calculations */
-            float dispersion(Vector2 K);
-            std::complex<float> h_tilde(Vector2 K, int n, int m, float t);
+            double dispersion(Vector2 K);
+            std::complex<double> h_tilde(Vector2 K, int index, double t);
         public:
-            float amplitude;
-            float wind_speed;
-            float lambda;
-            float smoothing;
+            double amplitude;
+            double wind_speed;
+            double lambda;
+            double smoothing;
             Vector2 wind_direction;
 
             static void _register_methods();
@@ -55,7 +57,7 @@ namespace godot {
             
             void init(int freq_size);
             void calculate();
-            void update(float t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
+            Vector3 update(double t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
     };
 
 }

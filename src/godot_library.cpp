@@ -1,7 +1,6 @@
 #include <gdnative_api_struct.gen.h>
 
 #include "tessendorf.h"
-#include "fft.h"
 
 extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) {
     godot::Godot::gdnative_init(o);

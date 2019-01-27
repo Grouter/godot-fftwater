@@ -4,7 +4,7 @@
 - [x] Fix normals generation
 - [x] More precalculations for lower CPU usage
 - [ ] Adjusting LOD (changing N variable)
-- [ ] Release package for easier use
+- [x] Release package for easier use
 - [ ] Documentation
 
 # Godot FFT Water
@@ -38,6 +38,7 @@ scons p=linux/osx/windows generate_bindings=yes
 1) Scons
 2) g++ or clang++
 3) Compiled godot c++ bindings
+4) FFTW3 configured with `./configure --enable-shared --with-pic` flags
 
 ## Compile
 ``` bash
@@ -51,6 +52,5 @@ scons p=linux/osx/windows use_llvm=1
 ---
 
 # Thanks to
-[Simple-FFT](https://github.com/d1vanov/Simple-FFT)
 
 [Ocean simulation part two: using the fast Fourier transform](https://www.keithlantz.net/2011/11/ocean-simulation-part-two-using-the-fast-fourier-transform/)
