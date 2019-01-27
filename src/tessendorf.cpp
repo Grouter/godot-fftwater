@@ -8,11 +8,14 @@ using namespace godot;
 using namespace std;
 
 void Tessendorf::_register_methods() {
+    register_method("init", &Tessendorf::init);
+    register_method("calculate", &Tessendorf::calculate);
     register_method("update", &Tessendorf::update);
 
     register_property("amplitude", &Tessendorf::amplitude, 5.0f);
     register_property("wind_speed", &Tessendorf::wind_speed, 31.0f);
     register_property("lambda", &Tessendorf::lambda, -0.5f);
+    register_property("smoothing", &Tessendorf::smoothing, 2.0f);
     register_property("wind_direction", &Tessendorf::wind_direction, Vector2(1.0f, 0.0f));
 }
 
@@ -57,12 +60,14 @@ void Tessendorf::_init() {
     amplitude = 15.0f;
     wind_speed = 31.0f;
     lambda = -0.5f;
+    smoothing = 2.0f;
     wind_direction = Vector2(1.0f, 0.0f);
 
-    N = 128;
-    Nplus1 = N + 1;
-
     dist = normal_distribution<float>(0.0f, 1.0f);
+}
+
+void Tessendorf::init(int freq_size) {
+    N = freq_size;
 
     htilde = new complex<float>*[N];
     dx = new complex<float>*[N];
@@ -76,7 +81,9 @@ void Tessendorf::_init() {
         h0tk[i] = new complex<float>[N];
         h0tmk[i] = new complex<float>[N];
     }
+}
 
+void Tessendorf::calculate() {
     float kx, kz;
     for (int m = 0; m < N; m++) {
         kz = 2.0f * M_PI * (m - N / 2.0f) / length;
@@ -99,9 +106,8 @@ float Tessendorf::phillips(Vector2 K) {
     kl = (kl < 0.0001f) ? 0.0001f : kl;
     float dt = K.normalized().dot(wind_direction.normalized());
     float kl2 = kl * kl;
-    float l = pow(10, -4) * L;
 
-    return amplitude * exp(-1.0f / (kl2 * L * L)) / (kl2 * kl2) * pow(dt, 6) * exp(-(kl * kl) * l * l);
+    return amplitude * exp(-1.0f / (kl2 * L * L)) / (kl2 * kl2) * pow(dt, 6) * exp(-(kl * kl) * smoothing * smoothing);
 }
 
 complex<float> Tessendorf::h0_tilde(Vector2 K) {

@@ -20,7 +20,7 @@ namespace godot {
             /* Ocean simulation */
             float g;
             float length;
-            unsigned int N, Nplus1;
+            unsigned int N;
             std::complex<float> **htilde;
             std::complex<float> **dx;
             std::complex<float> **dz;
@@ -43,6 +43,7 @@ namespace godot {
             float amplitude;
             float wind_speed;
             float lambda;
+            float smoothing;
             Vector2 wind_direction;
 
             static void _register_methods();
@@ -52,6 +53,8 @@ namespace godot {
 
             void _init();
             
+            void init(int freq_size);
+            void calculate();
             void update(float t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
     };
 
