@@ -7,9 +7,9 @@
 [sub_resource type="PlaneMesh" id=1]
 
 material = ExtResource( 1 )
-size = Vector2( 50, 50 )
-subdivide_width = 128
-subdivide_depth = 128
+size = Vector2( 100, 100 )
+subdivide_width = 256
+subdivide_depth = 256
 
 [node name="Spatial" type="Spatial"]
 
@@ -19,7 +19,7 @@ material/0 = null
 script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13, 40 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 60 )
 far = 500.0
 script = ExtResource( 3 )
 max_speed = Vector3( 10, 10, 10 )
