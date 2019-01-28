@@ -100,6 +100,10 @@ void Tessendorf::init(int freq_size) {
 void Tessendorf::calculate() {
     int index;
     double kx, kz;
+
+    // prevent zero division and weird behavior
+    length = (length < 0.0) ? length = 1.0 : length;
+
     for (int m = 0; m < N; m++) {
         kz = 2.0 * M_PI * (m - N / 2.0) / length;
         for (int n = 0; n < N; n++) {
@@ -181,7 +185,7 @@ void Tessendorf::update(double time) {
  * 
  * float texture RGB = XYZ displacement
 */
-void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String unfiorm_name) {
+void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String uniform_name) {
     int sign;
     int index;
     double norm = 10000.0; // scaling down displacement values
