@@ -11,6 +11,7 @@ void Tessendorf::_register_methods() {
     register_method("init", &Tessendorf::init);
     register_method("calculate", &Tessendorf::calculate);
     register_method("update", &Tessendorf::update);
+    register_method("send_displacement", &Tessendorf::send_displacement);
 
     register_property("amplitude", &Tessendorf::amplitude, 5.0);
     register_property("wind_speed", &Tessendorf::wind_speed, 31.0);
@@ -144,7 +145,7 @@ complex<double> Tessendorf::h_tilde(Vector2 K, int index, double time) {
     return h0tk[index] * rot + conj(h0tmk[index]) * roti;
 }
 
-void Tessendorf::update(double time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {
+void Tessendorf::update(double time) {
     int index;
 
     // Calculate FFT frequency space for x, y, z displacement
@@ -171,32 +172,43 @@ void Tessendorf::update(double time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> 
     fftw_execute(p_htilde);
     fftw_execute(p_dx);
     fftw_execute(p_dz);
+}
 
-    // Create displacement Image
+/**
+ * Send displacement texture to shader
+ * @uniform_name is the name of uniform variable in shader, that
+ * is used as diplacement map
+ * 
+ * float texture RGB = XYZ displacement
+*/
+void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String unfiorm_name) {
     int sign;
+    int index;
+    double norm = 10000.0; // scaling down displacement values
     double signs[] = { 1.0, -1.0 };
+    
     Image *himg = Image::_new();
     himg->create(N, N, false, Image::FORMAT_RGBF);
     himg->lock();
+    
     for (int m = 0; m < N; m++) {
         for (int n = 0; n < N; n++) {
             sign = signs[(n + m) & 1];
             index = m * N + n;
 
-            htilde[index] *= (double)sign / 10000.0;
-            dx[index] *= (double)sign * lambda / 10000.0;
-            dz[index] *= (double)sign * lambda / 10000.0;
+            htilde[index] *= (double)sign / norm;
+            dx[index] *= (double)sign * lambda / norm;
+            dz[index] *= (double)sign * lambda / norm;
 
             himg->set_pixel(n, m, Color(
-                dx[index].real(),
-                htilde[index].real(),
-                dz[index].real()
+                dx[index].real(),       // X
+                htilde[index].real(),   // Y
+                dz[index].real()        // Z
             ));
         }
     }
 
-    // Create texture from Image and send it to shader
     ImageTexture *htex = ImageTexture::_new();
     htex->create_from_image(himg);
-    material->set_shader_param("height_map", htex);
+    material->set_shader_param(unfiorm_name, htex);
 }

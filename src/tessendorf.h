@@ -5,8 +5,8 @@
 #include <Reference.hpp>
 #include <Ref.hpp>
 #include <Vector2.hpp>
-#include <MeshDataTool.hpp>
 #include <ShaderMaterial.hpp>
+#include <String.hpp>
 
 #include <complex>
 #include <random>
@@ -57,7 +57,8 @@ namespace godot {
             
             void init(int freq_size);
             void calculate();
-            void update(double t, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material);
+            void update(double t);
+            void send_displacement(Ref<ShaderMaterial> material, String unfirom_name);
     };
 
 }
