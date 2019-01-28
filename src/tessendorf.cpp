@@ -43,9 +43,12 @@ Tessendorf::~Tessendorf() {
     fftw_destroy_plan(p_dz);
 }
 
+/**
+ * Godot init function
+ * - initialize default variables
+ * - initialize variables that gdscript won't touch
+*/
 void Tessendorf::_init() {
-    g = 9.81;
-
     amplitude = 15.0;
     wind_speed = 31.0;
     length = 500.0;
@@ -53,9 +56,15 @@ void Tessendorf::_init() {
     smoothing = 2.0;
     wind_direction = Vector2(1.0, 0.0);
 
+    g = 9.81;
     dist = normal_distribution<double>(0.0, 1.0);
 }
 
+/**
+ * Custom init function
+ * - define N -> frequency resolution
+ * - initialize arrays and fftw plans for FFT
+*/
 void Tessendorf::init(int freq_size) {
     N = freq_size;
     Nsq = N * N;
@@ -82,6 +91,11 @@ void Tessendorf::init(int freq_size) {
     );
 }
 
+/**
+ * Calculate and store h0_tilde(K) and h0_tilde(-K)
+ * - used when ocean simulation variables are
+ * changed
+*/
 void Tessendorf::calculate() {
     int index;
     double kx, kz;
@@ -108,7 +122,7 @@ double Tessendorf::phillips(Vector2 K) {
     kl = (kl < 0.0001) ? 0.0001 : kl;
     double dt = K.normalized().dot(wind_direction.normalized());
     double kl2 = kl * kl;
-    double dt6 = dt * dt * dt * dt * dt * dt;
+    double dt6 = dt * dt * dt * dt * dt * dt;   // more dt multiplications causes better wind direction alignment
 
     return amplitude * exp(-1.0 / (kl2 * L * L)) / (kl2 * kl2) * dt6 * exp(-(kl * kl) * smoothing * smoothing);
 }
@@ -133,6 +147,7 @@ complex<double> Tessendorf::h_tilde(Vector2 K, int index, double time) {
 void Tessendorf::update(double time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> material) {
     int index;
 
+    // Calculate FFT frequency space for x, y, z displacement
     double kx, kz, klen;
     for (int m = 0; m < N; m++) {
         kz = 2.0 * M_PI * (m - N / 2.0) / length;
@@ -157,6 +172,7 @@ void Tessendorf::update(double time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> 
     fftw_execute(p_dx);
     fftw_execute(p_dz);
 
+    // Create displacement Image
     int sign;
     double signs[] = { 1.0, -1.0 };
     Image *himg = Image::_new();
@@ -179,6 +195,7 @@ void Tessendorf::update(double time, Ref<MeshDataTool> mdt, Ref<ShaderMaterial> 
         }
     }
 
+    // Create texture from Image and send it to shader
     ImageTexture *htex = ImageTexture::_new();
     htex->create_from_image(himg);
     material->set_shader_param("height_map", htex);

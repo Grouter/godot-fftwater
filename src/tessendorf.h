@@ -25,7 +25,6 @@ namespace godot {
             std::complex<double> *dz, *dz_i;
             std::complex<double> *h0tk;
             std::complex<double> *h0tmk;
-
             fftw_plan p_htilde, p_dx, p_dz;
             
             /* Gaussian random */
@@ -41,6 +40,7 @@ namespace godot {
             double dispersion(Vector2 K);
             std::complex<double> h_tilde(Vector2 K, int index, double t);
         public:
+            /* Ocean simulation tweaking variables */
             double amplitude;
             double wind_speed;
             double length;
