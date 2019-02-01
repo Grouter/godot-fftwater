@@ -8,9 +8,10 @@ using namespace godot;
 using namespace std;
 
 void Tessendorf::_register_methods() {
-    register_method("create", &Tessendorf::create);
+    register_method("init", &Tessendorf::create);
     register_method("calculate", &Tessendorf::calculate);
     register_method("update", &Tessendorf::update);
+    register_method("send_displacement", &Tessendorf::send_displacement);
 
     register_property("amplitude", &Tessendorf::amplitude, 5.0);
     register_property("wind_speed", &Tessendorf::wind_speed, 31.0);
@@ -176,10 +177,25 @@ void Tessendorf::update(double time) {
     fftw_execute(p_htilde);
     fftw_execute(p_dx);
     fftw_execute(p_dz);
+}
 
+/**
+ * Send displacement texture to shader
+ * @uniform_name is the name of uniform variable in shader, that
+ * is used as diplacement map
+ * 
+ * float texture RGB = XYZ displacement
+*/
+void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String uniform_name) {
     int sign;
+    int index;
     double norm = 10000.0; // scaling down displacement values
     double signs[] = { 1.0, -1.0 };
+    
+    Image *himg = Image::_new();
+    himg->create(N, N, false, Image::FORMAT_RGBF);
+    himg->lock();
+    
     for (int m = 0; m < N; m++) {
         for (int n = 0; n < N; n++) {
             sign = signs[(n + m) & 1];
@@ -188,6 +204,16 @@ void Tessendorf::update(double time) {
             htilde[index] *= (double)sign / norm;
             dx[index] *= (double)sign * lambda / norm;
             dz[index] *= (double)sign * lambda / norm;
+
+            himg->set_pixel(n, m, Color(
+                dx[index].real(),       // X
+                htilde[index].real(),   // Y
+                dz[index].real()        // Z
+            ));
         }
     }
+
+    ImageTexture *htex = ImageTexture::_new();
+    htex->create_from_image(himg);
+    material->set_shader_param(uniform_name, htex);
 }
