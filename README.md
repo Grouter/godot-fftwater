@@ -1,11 +1,7 @@
 # WIP -> TODO
-- [x] Vertical displacement (y axis)
-- [x] Horizontal displacement (xz axis) - choppy waves
-- [x] Fix normals generation
-- [x] More precalculations for lower CPU usage
-- [ ] Adjusting LOD (changing N variable)
-- [x] Release package for easier use
-- [ ] Documentation
+- [ ] Water colors
+- [ ] Light reflections
+- [ ] Water foam
 
 # Godot FFT Water
 Works on Godot 3.1-beta
