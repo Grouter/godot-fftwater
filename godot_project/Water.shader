@@ -16,14 +16,14 @@ vec3 get_normal(in vec2 pos) {
 	float u = texture(height_map, pos + off.yx / texsize).g; // 10
 	float d = texture(height_map, pos + off.yz / texsize).g; // 12
 	
-	vec3 va = normalize(vec3(size.xy, r - l));
-	vec3 vb = normalize(vec3(size.yx, d - u));
+	vec3 va = normalize(vec3(size.xy, l - r));
+	vec3 vb = normalize(vec3(-size.yx, u - d));
 
 	return normalize(cross(va, vb));
 }
 
 float schlick(in vec3 I, in vec3 N) {
-	float theta = clamp(dot(normalize(I.xyz), normalize(N.xyz)), -1.0, 1.0);
+	float theta = clamp(dot(normalize(I), normalize(N)), -1.0, 1.0);
 	float R0 = 0.02037;
 	return R0 + (1.0 - R0) * pow(1.0 - theta, 5);
 }
