@@ -55,7 +55,7 @@ namespace godot {
 
             void _init();
             
-            void init(int freq_size);
+            void create(int freq_size);
             void calculate();
             void update(double t);
             void send_displacement(Ref<ShaderMaterial> material, String uniform_name);

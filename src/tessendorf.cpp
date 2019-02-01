@@ -8,7 +8,7 @@ using namespace godot;
 using namespace std;
 
 void Tessendorf::_register_methods() {
-    register_method("init", &Tessendorf::init);
+    register_method("init", &Tessendorf::create);
     register_method("calculate", &Tessendorf::calculate);
     register_method("update", &Tessendorf::update);
     register_method("send_displacement", &Tessendorf::send_displacement);
@@ -62,11 +62,11 @@ void Tessendorf::_init() {
 }
 
 /**
- * Custom init function
+ * Create arrays and plans
  * - define N -> frequency resolution
  * - initialize arrays and fftw plans for FFT
 */
-void Tessendorf::init(int freq_size) {
+void Tessendorf::create(int freq_size) {
     N = freq_size;
     Nsq = N * N;
 
@@ -149,10 +149,11 @@ complex<double> Tessendorf::h_tilde(Vector2 K, int index, double time) {
     return h0tk[index] * rot + conj(h0tmk[index]) * roti;
 }
 
+/**
+ * Calculate x, y, z displacement with fft
+*/
 void Tessendorf::update(double time) {
     int index;
-
-    // Calculate FFT frequency space for x, y, z displacement
     double kx, kz, klen;
     for (int m = 0; m < N; m++) {
         kz = 2.0 * M_PI * (m - N / 2.0) / length;
@@ -214,5 +215,5 @@ void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String uniform_
 
     ImageTexture *htex = ImageTexture::_new();
     htex->create_from_image(himg);
-    material->set_shader_param(unfiorm_name, htex);
+    material->set_shader_param(uniform_name, htex);
 }
