@@ -8,7 +8,7 @@ using namespace godot;
 using namespace std;
 
 void Tessendorf::_register_methods() {
-    register_method("init", &Tessendorf::create);
+    register_method("create", &Tessendorf::create);
     register_method("calculate", &Tessendorf::calculate);
     register_method("update", &Tessendorf::update);
     register_method("send_displacement", &Tessendorf::send_displacement);
@@ -177,6 +177,19 @@ void Tessendorf::update(double time) {
     fftw_execute(p_htilde);
     fftw_execute(p_dx);
     fftw_execute(p_dz);
+
+    int sign;
+    double signs[] = { 1.0, -1.0 };
+    double norm = 10000.0; // scaling down displacement values
+    for (int m = 0; m < N; m++) {
+        for (int n = 0; n < N; n++) {
+            sign = signs[(n + m) & 1];
+
+            htilde[index] *= (double)sign / norm;
+            dx[index] *= (double)sign * lambda / norm;
+            dz[index] *= (double)sign * lambda / norm;
+        }
+    }
 }
 
 /**
@@ -187,23 +200,14 @@ void Tessendorf::update(double time) {
  * float texture RGB = XYZ displacement
 */
 void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String uniform_name) {
-    int sign;
-    int index;
-    double norm = 10000.0; // scaling down displacement values
-    double signs[] = { 1.0, -1.0 };
-    
     Image *himg = Image::_new();
     himg->create(N, N, false, Image::FORMAT_RGBF);
     himg->lock();
     
+    int index;
     for (int m = 0; m < N; m++) {
         for (int n = 0; n < N; n++) {
-            sign = signs[(n + m) & 1];
             index = m * N + n;
-
-            htilde[index] *= (double)sign / norm;
-            dx[index] *= (double)sign * lambda / norm;
-            dz[index] *= (double)sign * lambda / norm;
 
             himg->set_pixel(n, m, Color(
                 dx[index].real(),       // X

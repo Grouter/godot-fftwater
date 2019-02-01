@@ -5,7 +5,7 @@ onready var start_time = OS.get_ticks_msec()
 onready var shader_mat = self.mesh.surface_get_material(0)
 
 func _ready():	
-	tessendorf.init(128)	# ftt resolution
+	tessendorf.create(128)	# ftt resolution
 	tessendorf.amplitude = 15.0
 	tessendorf.wind_speed = 31.0
 	tessendorf.length = 500.0
