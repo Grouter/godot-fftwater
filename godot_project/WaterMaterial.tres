@@ -5,6 +5,8 @@
 [resource]
 
 shader = ExtResource( 1 )
+shader_param/lambda = -5.0
+shader_param/foam_treshold = -0.8
 shader_param/off = Vector3( -1, 0, 1 )
 shader_param/size = Vector2( 2, 0 )
 
