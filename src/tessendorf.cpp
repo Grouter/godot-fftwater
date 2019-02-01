@@ -184,6 +184,7 @@ void Tessendorf::update(double time) {
     for (int m = 0; m < N; m++) {
         for (int n = 0; n < N; n++) {
             sign = signs[(n + m) & 1];
+            index = m * N + n;
 
             htilde[index] *= (double)sign / norm;
             dx[index] *= (double)sign * lambda / norm;
