@@ -127,9 +127,9 @@ double Tessendorf::phillips(Vector2 K) {
     kl = (kl < 0.0001) ? 0.0001 : kl;
     double dt = K.normalized().dot(wind_direction.normalized());
     double kl2 = kl * kl;
-    double dt6 = dt * dt * dt * dt * dt * dt;   // more dt multiplications causes better wind direction alignment
+    double powdt = dt * dt * dt * dt;   // more dt multiplications causes better wind direction alignment
 
-    return amplitude * exp(-1.0 / (kl2 * L * L)) / (kl2 * kl2) * dt6 * exp(-(kl * kl) * smoothing * smoothing);
+    return amplitude * exp(-1.0 / (kl2 * L * L)) / (kl2 * kl2) * powdt * exp(-(kl * kl) * smoothing * smoothing);
 }
 
 complex<double> Tessendorf::h0_tilde(Vector2 K) {
