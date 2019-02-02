@@ -3,8 +3,10 @@ shader_type spatial;
 uniform sampler2D height_map;
 uniform sampler2D folding_map;
 
-uniform float lambda = -5.0;
-uniform float foam_treshold = -0.8;
+uniform float lambda = -4.0;
+uniform float foam_treshold = 0.0;
+
+uniform vec3 water = vec3(0.0, 0.4, 0.8);
 
 uniform vec3 off = vec3(-1.0, 0.0, 1.0);
 uniform vec2 size = vec2(2.0, 0.0);
@@ -45,9 +47,9 @@ void vertex() {
 
 void fragment() {
 	float foam = jacobian(texture(height_map, UV).xz);
-	if(foam < foam_treshold) {
-		ALBEDO.rgb = vec3(1.0 - foam);
+	if(foam <= foam_treshold && COLOR.r > 0.2) {
+		ALBEDO.rgb = mix(water, vec3(1.0), clamp(-1.0 * foam, 0.0, 1.0));
 	} else {
-		ALBEDO.rgb = vec3(0.0, 0.4, 0.8);
+		ALBEDO.rgb = water;
 	}
 }
