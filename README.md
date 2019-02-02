@@ -2,7 +2,7 @@
 Works on Godot 3.1-beta
 
 This project is still not finished. See TODO boeard in here:
-[Trello board](https://trello.com/b/YNCQvnw6/godot-fft-water)
+[Road to version 1.0](https://github.com/Grouter/godot-fftwater/projects/1)
 
 ---
 
