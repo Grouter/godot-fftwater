@@ -1,14 +1,12 @@
 # Godot FFT Water
 Works on Godot 3.1-beta
 
-This project is still not finished. See TODO boeard in here:
+This project is still not finished. See TODO board in here:
 [Road to version 1.0](https://github.com/Grouter/godot-fftwater/projects/1)
 
 ---
 
 # Usage (if you want to just use it in your gameboard
-`tessendorf.gdns` library just generates displacement values and pushes them via texture to material(shader) passed in by update funtion. Actual vertex displacement must be done in shader.
-
 Download zip from [release page](https://github.com/Grouter/godot-fftwater/releases) and unzip in your Godot project folder.
 
 1) Create `MeshInstance` and set `PlaneMesh` as mesh property
