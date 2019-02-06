@@ -6,7 +6,7 @@ This project is still not finished. See TODO board in here:
 
 ---
 
-# Usage (if you want to just use it in your gameboard
+# Usage (if you want to just use it in your game)
 Download zip from [release page](https://github.com/Grouter/godot-fftwater/releases) and unzip in your Godot project folder.
 
 1) Create `MeshInstance` and set `PlaneMesh` as mesh property
