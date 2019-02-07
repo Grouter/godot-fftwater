@@ -12,15 +12,7 @@ This project is still not finished. See TODO board in here:
 ---
 
 # Usage (if you want to just use it in your game)
-Download zip from [release page](https://github.com/Grouter/godot-fftwater/releases) and unzip in your Godot project folder.
-
-1) Create `MeshInstance` and set `PlaneMesh` as mesh property
-    * adjust size and subdivide as you want
-2) Create `ShaderMaterial` in material property and attach `Water.shader` to it
-3) Attach `Water.gd`
-4) Change as you want
-
-# For detailed and explained usage go to [WIKI](https://github.com/Grouter/godot-fftwater/wiki)
+[WIKI](https://github.com/Grouter/godot-fftwater/wiki)
 
 ---
 
