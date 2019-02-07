@@ -6,6 +6,11 @@ This project is still not finished. See TODO board in here:
 
 ---
 
+![Water-1](https://github.com/Grouter/godot-fftwater/blob/master/screenshots/water-alpha1.png)
+![Water-2](https://github.com/Grouter/godot-fftwater/blob/master/screenshots/water-alpha2.png)
+
+---
+
 # Usage (if you want to just use it in your game)
 Download zip from [release page](https://github.com/Grouter/godot-fftwater/releases) and unzip in your Godot project folder.
 
