@@ -15,6 +15,8 @@ Download zip from [release page](https://github.com/Grouter/godot-fftwater/relea
 3) Attach `Water.gd`
 4) Change as you want
 
+# For detailed and explained usage go to [WIKI](https://github.com/Grouter/godot-fftwater/wiki)
+
 ---
 
 # Usage (if you want to extend this in c++)
