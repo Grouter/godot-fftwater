@@ -1,5 +1,5 @@
 # Godot FFT Water
-Works on Godot 3.1-beta
+Works on Godot 3.2-beta
 
 This project is still not finished. See TODO board in here:
 [Road to version 1.0](https://github.com/Grouter/godot-fftwater/projects/1)
