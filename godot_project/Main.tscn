@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://WaterMaterial.tres" type="Material" id=1]
+[ext_resource path="res://WaterShading2/WaterMaterial2.tres" type="Material" id=1]
 [ext_resource path="res://Water.gd" type="Script" id=2]
 [ext_resource path="res://assets/maujoe.camera_control/scripts/camera_control.gd" type="Script" id=3]
 
