@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://Water.shader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/lambda = -4.0
+shader_param/foam_treshold = 0.0
+shader_param/water = Vector3( 0, 0.4, 0.8 )
+shader_param/off = Vector3( -1, 0, 1 )
+shader_param/size = Vector2( 2, 0 )
