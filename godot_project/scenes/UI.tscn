@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://UI.gd" type="Script" id=1]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 725.0
+margin_top = 24.0
+margin_right = 996.0
+margin_bottom = 64.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WindSpeed" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 271.0
+margin_bottom = 16.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="VBoxContainer/WindSpeed"]
+margin_top = 1.0
+margin_right = 33.0
+margin_bottom = 15.0
+text = "Wind"
+align = 1
+valign = 1
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/WindSpeed"]
+margin_left = 37.0
+margin_right = 237.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 200, 10 )
+min_value = 1.0
+value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Amplitude" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 20.0
+margin_right = 271.0
+margin_bottom = 36.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="VBoxContainer/Amplitude"]
+margin_top = 1.0
+margin_right = 67.0
+margin_bottom = 15.0
+text = "Amplitude"
+align = 1
+valign = 1
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/Amplitude"]
+margin_left = 71.0
+margin_right = 271.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 200, 10 )
+min_value = 1.0
+value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="value_changed" from="VBoxContainer/WindSpeed/HSlider" to="." method="_on_WindSlider_value_changed"]
+[connection signal="value_changed" from="VBoxContainer/Amplitude/HSlider" to="." method="_on_AmplitudeSlider_value_changed"]
