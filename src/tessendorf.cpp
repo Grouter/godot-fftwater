@@ -3,6 +3,7 @@
 #include <MeshDataTool.hpp>
 #include <Image.hpp>
 #include <ImageTexture.hpp>
+#include <thread>
 
 using namespace godot;
 using namespace std;
@@ -50,14 +51,6 @@ Tessendorf::~Tessendorf() {
  * - initialize variables that gdscript won't touch
 */
 void Tessendorf::_init() {
-    amplitude = 15.0;
-    wind_speed = 31.0;
-    length = 500.0;
-    lambda = -0.5;
-    smoothing = 2.0;
-    wind_direction = Vector2(1.0, 0.0);
-
-    g = 9.81;
     dist = normal_distribution<double>(0.0, 1.0);
 }
 
@@ -69,6 +62,8 @@ void Tessendorf::_init() {
 void Tessendorf::create(int freq_size) {
     N = freq_size;
     Nsq = N * N;
+
+    //himg->create(N, N, false, Image::FORMAT_RGBF);
 
     htilde_i = new complex<double>[Nsq];
     htilde = new complex<double>[Nsq];
@@ -102,12 +97,13 @@ void Tessendorf::calculate() {
     double kx, kz;
 
     // prevent zero division and weird behavior
-    length = (length < 0.0) ? length = 1.0 : length;
+    if (length <= 0.0)
+        length = 1.0;
 
     for (int m = 0; m < N; m++) {
-        kz = 2.0 * M_PI * (m - N / 2.0) / length;
+        kz = TWO_PI * (m - N / 2.0) / length;
         for (int n = 0; n < N; n++) {
-            kx = 2.0 * M_PI * (n - N / 2.0) / length;
+            kx = TWO_PI * (n - N / 2.0) / length;
             index = m * N + n;
 
             h0tk[index] = h0_tilde(Vector2(kx, kz));
@@ -137,6 +133,8 @@ complex<double> Tessendorf::h0_tilde(Vector2 K) {
     return gauss_pick * (1.0 / sqrt(2.0)) * sqrt(phillips(K));
 }
 
+/* REAL TIME CALCULATIONS */
+
 double Tessendorf::dispersion(Vector2 K) {
     return sqrt(g * K.length());
 }
@@ -149,48 +147,111 @@ complex<double> Tessendorf::h_tilde(Vector2 K, int index, double time) {
     return h0tk[index] * rot + conj(h0tmk[index]) * roti;
 }
 
-/**
- * Calculate x, y, z displacement with fft
-*/
-void Tessendorf::update(double time) {
+int Tessendorf::get_index(int m, int n) {
+    return m * N + n;
+}
+
+void Tessendorf::update_x() {
     int index;
     double kx, kz, klen;
-    for (int m = 0; m < N; m++) {
-        kz = 2.0 * M_PI * (m - N / 2.0) / length;
-        for (int n = 0; n < N; n++) {
-            kx = 2.0 * M_PI * (n - N / 2.0) / length;
-            klen = sqrt(kx * kx + kz * kz);
-            index = m * N + n;
 
-            htilde_i[index] = h_tilde(Vector2(kx, kz), index, time);
+    for (int m = 0; m < N; m++) {
+        kz = TWO_PI * (m - N / 2.0) / length;
+        
+        for (int n = 0; n < N; n++) {
+            kx = TWO_PI * (n - N / 2.0) / length;
+            klen = sqrt(kx * kx + kz * kz);
+            index = get_index(m, n);
 
             if (klen < 0.000001) {
                 dx_i[index] = complex<double>(0.0, 0.0);
-                dz_i[index] = complex<double>(0.0, 0.0);
-            } else {
+            } 
+            else {
                 dx_i[index] = htilde_i[index] * complex<double>(0.0, -kx / klen);
+            }
+        }
+    }
+
+    fftw_execute(p_dx);
+
+    for (int m = 0; m < N; m++) {
+        for (int n = 0; n < N; n++) {
+            index = get_index(m, n);
+
+            dx[index] *= (double)signs[(n + m) & 1] * lambda / norm;
+        }
+    }
+}
+
+void Tessendorf::update_y(double time) {
+    int index;
+    double kx, kz;
+
+    for (int m = 0; m < N; m++) {
+        kz = TWO_PI * (m - N / 2.0) / length;
+        
+        for (int n = 0; n < N; n++) {
+            kx = TWO_PI * (n - N / 2.0) / length;
+            index = get_index(m, n);
+
+            htilde_i[index] = h_tilde(Vector2(kx, kz), index, time);
+        }
+    }
+
+    fftw_execute(p_htilde);
+
+    for (int m = 0; m < N; m++) {
+        for (int n = 0; n < N; n++) {
+            index = get_index(m, n);
+
+            htilde[index] *= (double)signs[(n + m) & 1] / norm;
+        }
+    }
+}
+
+void Tessendorf::update_z() {
+    int index;
+    double kx, kz, klen;
+
+    for (int m = 0; m < N; m++) {
+        kz = TWO_PI * (m - N / 2.0) / length;
+        
+        for (int n = 0; n < N; n++) {
+            kx = TWO_PI * (n - N / 2.0) / length;
+            klen = sqrt(kx * kx + kz * kz);
+            index = get_index(m, n);
+
+            if (klen < 0.000001) {
+                dz_i[index] = complex<double>(0.0, 0.0);
+            } 
+            else {
                 dz_i[index] = htilde_i[index] * complex<double>(0.0, -kz / klen);
             }
         }
     }
 
-    fftw_execute(p_htilde);
-    fftw_execute(p_dx);
     fftw_execute(p_dz);
 
-    int sign;
-    double signs[] = { 1.0, -1.0 };
-    double norm = 10000.0; // scaling down displacement values
     for (int m = 0; m < N; m++) {
         for (int n = 0; n < N; n++) {
-            sign = signs[(n + m) & 1];
-            index = m * N + n;
+            index = get_index(m, n);
 
-            htilde[index] *= (double)sign / norm;
-            dx[index] *= (double)sign * lambda / norm;
-            dz[index] *= (double)sign * lambda / norm;
+            dz[index] *= (double)signs[(n + m) & 1] * lambda / norm;
         }
     }
+}
+
+/**
+ * Calculate x, y, z displacement with fft
+*/
+void Tessendorf::update(double time) {
+    thread cx(&Tessendorf::update_x, this);
+    thread cy(&Tessendorf::update_y, this, time);
+    thread cz(&Tessendorf::update_z, this);
+
+    cx.join();
+    cy.join();
+    cz.join();
 }
 
 /**
@@ -203,6 +264,7 @@ void Tessendorf::update(double time) {
 void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String uniform_name) {
     Image *himg = Image::_new();
     himg->create(N, N, false, Image::FORMAT_RGBF);
+    
     himg->lock();
     
     int index;
@@ -218,7 +280,8 @@ void Tessendorf::send_displacement(Ref<ShaderMaterial> material, String uniform_
         }
     }
 
-    ImageTexture *htex = ImageTexture::_new();
+    himg->unlock();
+
     htex->create_from_image(himg);
     material->set_shader_param(uniform_name, htex);
 }
